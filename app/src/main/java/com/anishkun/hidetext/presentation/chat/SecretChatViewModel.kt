@@ -2,7 +2,6 @@ package com.anishkun.hidetext.presentation.chat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anishkun.hidetext.domain.manager.DisguiseManager
 import com.anishkun.hidetext.domain.model.Message
 import com.anishkun.hidetext.domain.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SecretChatViewModel @Inject constructor(
-    private val repository: ChatRepository,
-    private val disguiseManager: DisguiseManager
+    private val repository: ChatRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ChatState())
@@ -42,9 +40,6 @@ class SecretChatViewModel @Inject constructor(
             }
             is ChatIntent.SendMessage -> {
                 sendMessage()
-            }
-            is ChatIntent.ToggleDisguise -> {
-                disguiseManager.toggleDisguise()
             }
         }
     }
