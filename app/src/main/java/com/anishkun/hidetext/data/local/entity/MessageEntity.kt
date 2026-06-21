@@ -8,6 +8,7 @@ import com.anishkun.hidetext.domain.model.Message
 data class MessageEntity(
     @PrimaryKey val id: String,
     val senderId: String,
+    val contactPhoneNumber: String,
     val encryptedContent: String,
     val timestamp: Long,
     val isFromMe: Boolean
@@ -17,6 +18,7 @@ fun MessageEntity.toDomainMessage(): Message {
     return Message(
         id = id,
         senderId = senderId,
+        contactPhoneNumber = contactPhoneNumber,
         encryptedContent = encryptedContent,
         timestamp = timestamp,
         isFromMe = isFromMe
@@ -27,6 +29,7 @@ fun Message.toEntity(): MessageEntity {
     return MessageEntity(
         id = id,
         senderId = senderId,
+        contactPhoneNumber = contactPhoneNumber,
         encryptedContent = encryptedContent,
         timestamp = timestamp,
         isFromMe = isFromMe
