@@ -12,9 +12,12 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
+import com.anishkun.hidetext.domain.repository.UserPreferencesRepository
+
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val appLockManager: AppLockManager
+    private val appLockManager: AppLockManager,
+    private val userPrefs: UserPreferencesRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MainState())
@@ -27,6 +30,21 @@ class MainViewModel @Inject constructor(
                 currentInput = ""
             }
             .launchIn(viewModelScope)
+
+        userPrefs.myPhoneNumber
+            .onEach { phone ->
+                _state.update { it.copy(isSetupComplete = !phone.isNullOrBlank()) }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    fun lockApp() {
+        _state.update { it.copy(appMode = AppMode.DECOY, calculatorDisplay = "0") }
+        currentInput = ""
+    }
+
+    fun onSetupCompleted() {
+        _state.update { it.copy(isSetupComplete = true) }
     }
 
     private var currentInput = ""
