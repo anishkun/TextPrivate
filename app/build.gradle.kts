@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.androidx.navigation.compose)
 
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
@@ -74,4 +75,5 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.timber)
+    implementation(libs.datastore.preferences)
 }
