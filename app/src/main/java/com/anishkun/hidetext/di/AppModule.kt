@@ -47,4 +47,20 @@ object AppModule {
     ): kotlinx.coroutines.CoroutineScope {
         return kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + defaultDispatcher)
     }
+
+    @Provides
+    @Singleton
+    fun provideUserPreferencesRepository(
+        @dagger.hilt.android.qualifiers.ApplicationContext context: android.content.Context
+    ): com.anishkun.hidetext.domain.repository.UserPreferencesRepository {
+        return com.anishkun.hidetext.data.repository.UserPreferencesRepositoryImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideContactRepository(
+        database: com.anishkun.hidetext.data.local.ChatDatabase
+    ): com.anishkun.hidetext.domain.repository.ContactRepository {
+        return com.anishkun.hidetext.data.repository.ContactRepositoryImpl(database.contactDao)
+    }
 }
