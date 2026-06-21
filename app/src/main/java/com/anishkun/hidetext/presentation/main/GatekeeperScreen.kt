@@ -38,9 +38,7 @@ fun GatekeeperScreen(
                 )
             }
             AppMode.SECRET -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("SECURE CHAT UNLOCKED", fontSize = 24.sp)
-                }
+                com.anishkun.hidetext.presentation.chat.SecretChatScreen()
             }
         }
     }
