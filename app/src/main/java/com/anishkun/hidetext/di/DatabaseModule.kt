@@ -22,7 +22,7 @@ object DatabaseModule {
             context,
             ChatDatabase::class.java,
             "chat_database"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     @Provides
