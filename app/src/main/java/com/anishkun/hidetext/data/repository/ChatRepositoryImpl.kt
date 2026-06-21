@@ -3,6 +3,7 @@ package com.anishkun.hidetext.data.repository
 import com.anishkun.hidetext.data.local.dao.MessageDao
 import com.anishkun.hidetext.data.local.entity.toDomainMessage
 import com.anishkun.hidetext.data.local.entity.toEntity
+import com.anishkun.hidetext.data.local.entity.MessageEntity
 import com.anishkun.hidetext.data.remote.websocket.ChatWebSocketClient
 import com.anishkun.hidetext.domain.model.Message
 import com.anishkun.hidetext.domain.repository.ChatRepository
@@ -23,22 +24,24 @@ class ChatRepositoryImpl @Inject constructor(
     init {
         // Observe incoming websocket messages and save them locally
         externalScope.launch {
-            webSocketClient.incomingMessages.collect { encryptedPayload ->
-                // Simulate receiving an echo from the same contact we sent to
-                // In a real app, the payload would contain sender/receiver info
-                val parts = encryptedPayload.split("::", limit = 2)
-                if (parts.size == 2) {
-                    val contactPhone = parts[0]
-                    val content = parts[1]
+            webSocketClient.incomingMessages.collect { payload ->
+                try {
+                    val json = org.json.JSONObject(payload)
+                    val senderPhone = json.getString("senderPhone")
+                    val content = json.getString("encryptedContent")
+                    val timestamp = json.getLong("timestamp")
+
                     val receivedMessage = Message(
                         id = java.util.UUID.randomUUID().toString(),
-                        senderId = contactPhone,
-                        contactPhoneNumber = contactPhone,
+                        senderId = senderPhone,
+                        contactPhoneNumber = senderPhone, // The contact who sent it to us
                         encryptedContent = content,
-                        timestamp = System.currentTimeMillis(),
+                        timestamp = timestamp,
                         isFromMe = false
                     )
                     messageDao.insertMessage(receivedMessage.toEntity())
+                } catch (e: Exception) {
+                    // Not valid JSON or missing fields
                 }
             }
         }
@@ -51,15 +54,26 @@ class ChatRepositoryImpl @Inject constructor(
     }
 
     override suspend fun sendMessage(message: Message) {
-        // 1. Save locally immediately (Optimistic UI update)
-        messageDao.insertMessage(message.toEntity())
-        
-        // 2. Send over WebSocket with phone number info
-        webSocketClient.sendMessage("${message.contactPhoneNumber}::${message.encryptedContent}")
+        // Send via WebSocket (JSON or delimited string). The server expects JSON `ChatMessage`.
+        // We'll update this shortly to send properly formatted JSON.
+        webSocketClient.sendMessage("{\"receiverPhone\":\"${message.contactPhoneNumber}\", \"senderPhone\":\"${message.senderId}\", \"encryptedContent\":\"${message.encryptedContent}\", \"timestamp\":${message.timestamp}}")
     }
 
-    override fun connectWebSocket() {
-        webSocketClient.connect()
+    override suspend fun insertMessageLocally(message: Message) {
+        messageDao.insertMessage(
+            MessageEntity(
+                id = message.id,
+                senderId = message.senderId,
+                contactPhoneNumber = message.contactPhoneNumber,
+                encryptedContent = message.encryptedContent,
+                timestamp = message.timestamp,
+                isFromMe = message.isFromMe
+            )
+        )
+    }
+
+    override fun connectWebSocket(myPhoneNumber: String) {
+        webSocketClient.connect(myPhoneNumber)
     }
 
     override fun disconnectWebSocket() {

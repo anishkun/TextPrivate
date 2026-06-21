@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface ChatRepository {
     fun getMessagesForContact(phoneNumber: String): Flow<List<Message>>
     suspend fun sendMessage(message: Message)
-    fun connectWebSocket()
+    suspend fun insertMessageLocally(message: Message)
+    fun connectWebSocket(myPhoneNumber: String)
     fun disconnectWebSocket()
 }

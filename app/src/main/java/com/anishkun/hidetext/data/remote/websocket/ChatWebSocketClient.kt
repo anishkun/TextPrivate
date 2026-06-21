@@ -21,11 +21,11 @@ class ChatWebSocketClient @Inject constructor(
     private val _incomingMessages = MutableSharedFlow<String>()
     val incomingMessages: SharedFlow<String> = _incomingMessages.asSharedFlow()
 
-    fun connect() {
+    fun connect(myPhoneNumber: String) {
         if (webSocket != null) return // Already connected
         
-        // TODO: Replace with the actual backend WebSocket URL
-        val request = Request.Builder().url("wss://echo.websocket.events").build()
+        // Connect to local Ktor backend
+        val request = Request.Builder().url("ws://10.0.2.2:8080/chat?phone=$myPhoneNumber").build()
         
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
