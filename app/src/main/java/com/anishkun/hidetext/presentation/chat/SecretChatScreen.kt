@@ -99,12 +99,12 @@ fun MessageBubble(message: Message) {
     val backgroundColor = if (message.isFromMe) {
         MaterialTheme.colorScheme.primary
     } else {
-        MaterialTheme.colorScheme.secondaryContainer
+        MaterialTheme.colorScheme.surfaceVariant
     }
     val textColor = if (message.isFromMe) {
         MaterialTheme.colorScheme.onPrimary
     } else {
-        MaterialTheme.colorScheme.onSecondaryContainer
+        MaterialTheme.colorScheme.onSurfaceVariant
     }
     val shape = if (message.isFromMe) {
         RoundedCornerShape(16.dp, 16.dp, 0.dp, 16.dp)
