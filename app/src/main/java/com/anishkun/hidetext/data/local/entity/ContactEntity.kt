@@ -6,5 +6,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "contacts")
 data class ContactEntity(
     @PrimaryKey val phoneNumber: String,
-    val displayName: String
+    val displayName: String,
+    val publicKey: String?
 )

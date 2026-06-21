@@ -15,7 +15,7 @@ class ContactRepositoryImpl @Inject constructor(
         return contactDao.getAllContacts()
     }
 
-    override suspend fun addContact(phoneNumber: String, displayName: String) {
-        contactDao.insertContact(ContactEntity(phoneNumber, displayName))
+    override suspend fun addContact(phoneNumber: String, displayName: String, publicKey: String?) {
+        contactDao.insertContact(ContactEntity(phoneNumber, displayName, publicKey))
     }
 }

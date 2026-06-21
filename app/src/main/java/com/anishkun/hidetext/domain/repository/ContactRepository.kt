@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface ContactRepository {
     fun getAllContacts(): Flow<List<ContactEntity>>
-    suspend fun addContact(phoneNumber: String, displayName: String)
+    suspend fun addContact(phoneNumber: String, displayName: String, publicKey: String?)
 }
