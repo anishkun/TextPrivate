@@ -37,9 +37,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.anishkun.hidetext.domain.model.Message
 
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SecretChatScreen(
+    onBack: () -> Unit,
     viewModel: SecretChatViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -56,6 +59,11 @@ fun SecretChatScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Encrypted Session") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer

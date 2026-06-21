@@ -15,10 +15,15 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
+import androidx.lifecycle.SavedStateHandle
+
 @HiltViewModel
 class SecretChatViewModel @Inject constructor(
-    private val repository: ChatRepository
+    private val repository: ChatRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    private val contactPhoneNumber: String = checkNotNull(savedStateHandle["contactPhoneNumber"])
 
     private val _state = MutableStateFlow(ChatState())
     val state: StateFlow<ChatState> = _state.asStateFlow()
@@ -26,7 +31,7 @@ class SecretChatViewModel @Inject constructor(
     init {
         repository.connectWebSocket()
         
-        repository.getAllMessages()
+        repository.getMessagesForContact(contactPhoneNumber)
             .onEach { messages ->
                 _state.update { it.copy(messages = messages) }
             }
@@ -51,6 +56,7 @@ class SecretChatViewModel @Inject constructor(
         val message = Message(
             id = UUID.randomUUID().toString(),
             senderId = "me", // Assuming "me" for local sender
+            contactPhoneNumber = contactPhoneNumber,
             encryptedContent = currentInput, // In a real app, encrypt before sending
             timestamp = System.currentTimeMillis(),
             isFromMe = true
