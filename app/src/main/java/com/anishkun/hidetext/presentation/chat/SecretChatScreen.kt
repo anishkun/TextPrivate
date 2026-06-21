@@ -69,25 +69,50 @@ fun SecretChatScreen(
                     }
                 }
             )
-        },
-        bottomBar = {
-            ChatInputBar(
-                input = state.messageInput,
-                onInputChange = { viewModel.handleIntent(ChatIntent.UpdateInput(it)) },
-                onSendClick = { viewModel.handleIntent(ChatIntent.SendMessage) }
-            )
         }
-    ) { paddingValues ->
-        LazyColumn(
-            state = listState,
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(innerPadding)
         ) {
-            items(state.messages, key = { it.id }) { message ->
-                MessageBubble(message = message)
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(state.messages, key = { it.id }) { message ->
+                    MessageBubble(message = message)
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = state.messageInput,
+                    onValueChange = { viewModel.handleIntent(ChatIntent.UpdateInput(it)) },
+                    modifier = Modifier.weight(1f),
+                    placeholder = { Text("Type a message...") },
+                    shape = RoundedCornerShape(24.dp),
+                    maxLines = 4
+                )
+                IconButton(
+                    onClick = { viewModel.handleIntent(ChatIntent.SendMessage) },
+                    modifier = Modifier.padding(start = 8.dp),
+                    enabled = state.messageInput.isNotBlank()
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Send,
+                        contentDescription = "Send Message",
+                        tint = if (state.messageInput.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                    )
+                }
             }
         }
     }
@@ -129,41 +154,6 @@ fun MessageBubble(message: Message) {
                 text = message.encryptedContent,
                 color = textColor,
                 style = MaterialTheme.typography.bodyLarge
-            )
-        }
-    }
-}
-
-@Composable
-fun ChatInputBar(
-    input: String,
-    onInputChange: (String) -> Unit,
-    onSendClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        OutlinedTextField(
-            value = input,
-            onValueChange = onInputChange,
-            modifier = Modifier.weight(1f),
-            placeholder = { Text("Type a message...") },
-            shape = RoundedCornerShape(24.dp),
-            maxLines = 4
-        )
-        IconButton(
-            onClick = onSendClick,
-            modifier = Modifier.padding(start = 8.dp),
-            enabled = input.isNotBlank()
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.Send,
-                contentDescription = "Send Message",
-                tint = if (input.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
             )
         }
     }
