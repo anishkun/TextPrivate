@@ -63,4 +63,10 @@ object AppModule {
     ): com.anishkun.hidetext.domain.repository.ContactRepository {
         return com.anishkun.hidetext.data.repository.ContactRepositoryImpl(database.contactDao)
     }
+
+    @Provides
+    @Singleton
+    fun provideCryptoManager(): com.anishkun.hidetext.domain.crypto.CryptoManager {
+        return com.anishkun.hidetext.data.crypto.BasicRsaCryptoManager()
+    }
 }
