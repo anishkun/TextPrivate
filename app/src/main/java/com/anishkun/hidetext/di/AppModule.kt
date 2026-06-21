@@ -39,4 +39,12 @@ object AppModule {
     @Singleton
     @DefaultDispatcher
     fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
+
+    @Provides
+    @Singleton
+    fun provideApplicationScope(
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
+    ): kotlinx.coroutines.CoroutineScope {
+        return kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + defaultDispatcher)
+    }
 }
