@@ -17,6 +17,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.anishkun.hidetext.presentation.decoy.DecoyCalculatorScreen
 
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.anishkun.hidetext.presentation.contacts.ContactListScreen
+import com.anishkun.hidetext.presentation.setup.SetupScreen
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+
 @Composable
 fun GatekeeperScreen(
     viewModel: MainViewModel = hiltViewModel()
@@ -38,7 +46,38 @@ fun GatekeeperScreen(
                 )
             }
             AppMode.SECRET -> {
-                com.anishkun.hidetext.presentation.chat.SecretChatScreen()
+                val navController = rememberNavController()
+                val isSetupComplete = state.isSetupComplete
+                val startDestination = if (isSetupComplete) "contacts" else "setup"
+
+                NavHost(navController = navController, startDestination = startDestination) {
+                    composable("setup") {
+                        SetupScreen(
+                            onSetupComplete = {
+                                viewModel.onSetupCompleted()
+                                navController.navigate("contacts") {
+                                    popUpTo("setup") { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+                    composable("contacts") {
+                        ContactListScreen(
+                            onContactClick = { phoneNumber ->
+                                navController.navigate("chat/$phoneNumber")
+                            },
+                            onLockApp = { viewModel.lockApp() }
+                        )
+                    }
+                    composable(
+                        route = "chat/{contactPhoneNumber}",
+                        arguments = listOf(navArgument("contactPhoneNumber") { type = NavType.StringType })
+                    ) {
+                        com.anishkun.hidetext.presentation.chat.SecretChatScreen(
+                            onBack = { navController.popBackStack() }
+                        )
+                    }
+                }
             }
         }
     }
