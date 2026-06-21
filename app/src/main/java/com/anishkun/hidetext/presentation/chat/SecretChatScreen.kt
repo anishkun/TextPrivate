@@ -59,15 +59,7 @@ fun SecretChatScreen(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-                actions = {
-                    IconButton(onClick = { viewModel.handleIntent(ChatIntent.ToggleDisguise) }) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Toggle Disguise"
-                        )
-                    }
-                }
+                )
             )
         }
     ) { innerPadding ->
