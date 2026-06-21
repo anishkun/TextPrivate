@@ -47,12 +47,4 @@ object AppModule {
     ): kotlinx.coroutines.CoroutineScope {
         return kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + defaultDispatcher)
     }
-
-    @Provides
-    @Singleton
-    fun provideDisguiseManager(
-        @dagger.hilt.android.qualifiers.ApplicationContext context: android.content.Context
-    ): com.anishkun.hidetext.domain.manager.DisguiseManager {
-        return com.anishkun.hidetext.data.manager.DisguiseManagerImpl(context)
-    }
 }
